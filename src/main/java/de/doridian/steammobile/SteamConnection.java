@@ -45,6 +45,8 @@ public class SteamConnection {
 			} else {
 				System.out.println("Unknown error: " + e.errorCode);
 			}
+			return;
 		}
+		Main.writeAuthFile(username, password, token);
 	}
 }

@@ -62,7 +62,7 @@ public class Main {
 					for(Message msg : newMessages) {
 						if(msg instanceof TextMessage) {
 							TextMessage txtmsg = (TextMessage)msg;
-							System.out.println("<" + txtmsg.steamid_from + "> " + txtmsg.text);
+							System.out.println("<" + txtmsg.steamid_other + "> " + txtmsg.text);
 						}
 					}
 					try {

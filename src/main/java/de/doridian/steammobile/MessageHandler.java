@@ -50,9 +50,8 @@ public class MessageHandler {
 		}
 	}
 	
-	public void sendMessage(String to, String message) {
+	public void sendMessage(Message message) {
 		de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message msg = new de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message(connection);
-		msg.setDestination(to);
 		msg.setMessage(message);
 		try {
 			msg.send();

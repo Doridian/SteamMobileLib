@@ -13,28 +13,17 @@ public class Message extends BaseMethod {
 		connection.addAuthData(this, false, true, true);
 	}
 	
-	private String type = "saytext";
-	public void setType(String type) {
-		this.type = type;
-	}
-	
-	private String message = null;
-	public void setMessage(String message) {
+	private de.doridian.steammobile.messages.Message message;
+	public void setMessage(de.doridian.steammobile.messages.Message message) {
 		this.message = message;
-	}
-	
-	private String destination;
-	public void setDestination(String destination) {
-		this.destination = destination;
 	}
 
 	@Override
 	public JSONObject send() throws RequestException {
 		Map<String, String> params = new HashMap<String,String>();
-		params.put("type", type);
-		params.put("steamid_dst", destination);
-		if(message != null)
-			params.put("text", message);
+		message.addParameters(params);
+		params.put("type", message.getType());
+		params.put("steamid_dst", message.steamid_other);
 		return doRequest(params);
 	}
 }

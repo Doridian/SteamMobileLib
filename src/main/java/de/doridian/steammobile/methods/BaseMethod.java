@@ -12,8 +12,10 @@ import java.util.Map;
 
 public abstract class BaseMethod {
 	private static final String BASEURL = "https://api.steampowered.com/";
-	
-	public abstract JSONObject send() throws RequestException;
+
+	public JSONObject send() throws RequestException {
+		return doRequest(null);
+	}
 
 	private String steamid = null;
 	private String access_token = null;

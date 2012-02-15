@@ -12,10 +12,10 @@ Base handling
 API Methods
     Done
         - ISteamOAuth2/GetTokenWithCredentials
-    ToDo
         - ISteamUserOAuth/GetFriendList
         - ISteamUserOAuth/GetGroupList
         - ISteamUserOAuth/GetUserSummaries
+    ToDo
         - ISteamUserWebPresenceOAuth/Logon
         - ISteamUserWebPresenceOAuth/Message
         - ISteamUserWebPresenceOAuth/Poll

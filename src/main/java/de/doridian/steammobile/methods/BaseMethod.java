@@ -15,7 +15,30 @@ public abstract class BaseMethod {
 	
 	public abstract JSONObject send() throws RequestException;
 
+	private String steamid = null;
+	private String access_token = null;
+	private String umqid = null;
+	public void setSteamID(String steamid) {
+		this.steamid = steamid;
+	}
+	public void setAccessToken(String access_token) {
+		this.access_token = access_token;
+	}
+	public void setUmqid(String umqid) {
+		this.umqid = umqid;
+	}
+	
 	protected JSONObject doRequest(Map<String, String> data) throws RequestException {
+		if(steamid != null) {
+			data.put("steamid", steamid);
+		}
+		if(access_token != null) {
+			data.put("access_token", access_token);
+		}
+		if(umqid != null) {
+			data.put("umqid", umqid);
+		}
+
 		try {
 			Class clazz = this.getClass();
 			Package pkg = clazz.getPackage();

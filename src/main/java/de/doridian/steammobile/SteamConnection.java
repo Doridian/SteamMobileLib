@@ -5,8 +5,6 @@ import de.doridian.steammobile.methods.ISteamOAuth2.GetTokenWithCredentials;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 
-import java.util.Scanner;
-
 public class SteamConnection {
 	private String steamid;
 	private String access_token;
@@ -17,14 +15,19 @@ public class SteamConnection {
 	}
 
 	public SteamConnection(String username, String password, String token) {
+		long x = Main.random.nextLong();
+		if(x < 0) x = -x;
+		umqid = String.valueOf(x);
+
 		tryLogin(username, password, token);
 	}
 
 	private void tryLogin(String username, String password, String token) {
 		GetTokenWithCredentials request = new GetTokenWithCredentials(username, password, token);
+		JSONObject ret = null;
 		try {
-			JSONObject ret = request.send();
-			System.out.println(ret.toJSONString());
+			ret = request.send();
+			if(ret == null) return;
 		} catch(RequestException e) {
 			if(e.errorCode.equalsIgnoreCase("invalid_steamguard_code")) {
 				System.out.println("Invalid steam guard token.");
@@ -47,6 +50,19 @@ public class SteamConnection {
 			}
 			return;
 		}
+
 		Main.writeAuthFile(username, password, token);
+
+		steamid = (String)ret.get("x_steamid");
+		access_token = (String)ret.get("access_token");
+	}
+
+	public void addAuthData(BaseMethod method, boolean addSteamid, boolean addToken, boolean addUmqid) {
+		if(addSteamid)
+			method.setSteamID(steamid);
+		if(addToken)
+			method.setAccessToken(access_token);
+		if(addUmqid)
+			method.setUmqid(umqid);
 	}
 }

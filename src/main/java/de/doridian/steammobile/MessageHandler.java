@@ -2,6 +2,7 @@ package de.doridian.steammobile;
 
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
+import de.doridian.steammobile.messages.TypingMessage;
 import de.doridian.steammobile.methods.ISteamUserOAuth.GetFriendList;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Logon;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Poll;
@@ -79,14 +80,17 @@ public class MessageHandler {
 				String type = entj.get("type").toString().toLowerCase();
 				if(type.equals("saytext")) {
 					ret.add(new TextMessage(
-							Long.valueOf(entj.get("timestamp").toString()),
-							entj.get("steamid_from").toString(),
-							entj.get("text").toString()
+						Long.valueOf(entj.get("timestamp").toString()),
+						entj.get("steamid_from").toString(),
+						entj.get("text").toString()
 					));
 				} else if(type.equals("personastate")) {
 					//Ignored atm!
 				} else if(type.equals("typing")) {
-					//Ignored atm too!
+					ret.add(new TypingMessage(
+						Long.valueOf(entj.get("timestamp").toString()),
+						entj.get("steamid_from").toString()
+					));
 				}
 			}
 			return ret;

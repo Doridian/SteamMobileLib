@@ -7,4 +7,9 @@ public class GetGroupList extends BaseMethod {
 	public GetGroupList(SteamConnection connection) {
 		connection.addAuthData(this, true, true, false);
 	}
+
+	@Override
+	public boolean isPOST() {
+		return false;
+	}
 }

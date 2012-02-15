@@ -8,10 +8,12 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseMethod {
-	private static final String BASEURL = "https://api.steampowered.com/";
+	private static final String BASEURL = "http://api.steampowered.com/";
+	private static final String BASEURL_SSL = "https://api.steampowered.com/";
 
 	public JSONObject send() throws RequestException {
 		return doRequest(null);
@@ -30,7 +32,19 @@ public abstract class BaseMethod {
 		this.umqid = umqid;
 	}
 	
+	public boolean isPOST() {
+		return true;
+	}
+
+	public boolean isSSL() {
+		return true;
+	}
+	
 	protected JSONObject doRequest(Map<String, String> data) throws RequestException {
+		if(data == null) {
+			data = new HashMap<String, String>();
+		}
+
 		if(steamid != null) {
 			data.put("steamid", steamid);
 		}
@@ -46,31 +60,58 @@ public abstract class BaseMethod {
 			Package pkg = clazz.getPackage();
 			Package basePkg = BaseMethod.class.getPackage();
 	
-			URL url = new URL(BASEURL + pkg.getName().substring(basePkg.getName().length() + 1).replace('.', '/') + "/" + clazz.getSimpleName() + "/v0001");
-			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-	
-			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-			boolean isFirst = true;
-			for(Map.Entry<String, String> param : data.entrySet()) {
-				if(isFirst)
-					isFirst = false;
-				else
-					writer.write('&');
-	
-				writer.write(URLEncoder.encode(param.getKey()));
-				writer.write('=');
-				writer.write(URLEncoder.encode(param.getValue()));
+			URL url;
+			if(isSSL()) {
+				url = new URL(BASEURL_SSL);
+			} else {
+				url = new URL(BASEURL);
 			}
-			writer.close();
-	
+			
+			url = new URL(url, pkg.getName().substring(basePkg.getName().length() + 1).replace('.', '/') + "/" + clazz.getSimpleName() + "/v0001");
+			HttpURLConnection conn;
+
+			if(isPOST()) {
+				conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestMethod("POST");
+				conn.setDoOutput(true);
+
+				OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+				boolean isFirst = true;
+				for(Map.Entry<String, String> param : data.entrySet()) {
+					if(isFirst)
+						isFirst = false;
+					else
+						writer.write('&');
+
+					writer.write(URLEncoder.encode(param.getKey()));
+					writer.write('=');
+					writer.write(URLEncoder.encode(param.getValue()));
+				}
+				writer.close();
+			} else {
+				StringBuilder sb = new StringBuilder();
+				sb.append(url);
+				sb.append('?');
+				boolean isFirst = true;
+				for(Map.Entry<String, String> param : data.entrySet()) {
+					if(isFirst)
+						isFirst = false;
+					else
+						sb.append('&');
+
+					sb.append(URLEncoder.encode(param.getKey()));
+					sb.append('=');
+					sb.append(URLEncoder.encode(param.getValue()));
+				}
+				url = new URL(sb.toString());
+				conn = (HttpURLConnection)url.openConnection();
+			}
+			
 			InputStreamReader reader = new InputStreamReader(conn.getInputStream());
 			JSONObject ret = (JSONObject)((new JSONParser()).parse(reader));
 			reader.close();
-			
-			if(ret.containsKey("error")) {
+
+			if(ret.containsKey("error") && !ret.get("error").toString().toLowerCase().equals("ok")) {
 				throw new RequestException((String)ret.get("error"), (String)ret.get("x_errorcode"), (String)ret.get("error_description"));
 			}
 			

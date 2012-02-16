@@ -1,8 +1,14 @@
 package de.doridian.steammobile.messages;
 
+import org.json.simple.JSONObject;
+
 @Message.Type("leftconversation")
 public class LeftConversationMessage extends Message {
-	public LeftConversationMessage(long timestamp, String steamid_other) {
-		super(timestamp, steamid_other);
+	public LeftConversationMessage(JSONObject json) {
+		super(json);
+	}
+
+	public LeftConversationMessage(String steamid_other) {
+		super(steamid_other);
 	}
 }

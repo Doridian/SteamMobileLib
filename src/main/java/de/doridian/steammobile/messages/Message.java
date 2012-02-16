@@ -17,15 +17,13 @@ public abstract class Message {
 	public final String steamid_other;
 
 	public Message(JSONObject json) {
-		this(
-			Long.valueOf(json.get("timestamp").toString()),
-			json.get("steamid_from").toString()
-		);
+		this.steamid_other = json.get("steamid_from").toString();
+		this.timestamp = Long.valueOf(json.get("timestamp").toString());
 	}
 
-	public Message(long timestamp, String steamid_other) {
-		this.timestamp = timestamp;
+	public Message(String steamid_other) {
 		this.steamid_other = steamid_other;
+		this.timestamp = 0;
 	}
 
 	public void addParameters(Map<String, String> params) { }

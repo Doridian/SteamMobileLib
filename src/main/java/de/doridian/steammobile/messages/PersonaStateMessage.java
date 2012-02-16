@@ -18,12 +18,12 @@ public class PersonaStateMessage extends Message {
 		this.status_flags = Integer.valueOf(json.get("status_flags").toString());
 	}
 
-	public PersonaStateMessage(long timestamp, String steamid_other, Friend.State persona_state, String persona_name) {
-		this(timestamp, steamid_other, persona_state, persona_name, 863);
+	public PersonaStateMessage(String steamid_other, Friend.State persona_state, String persona_name) {
+		this(steamid_other, persona_state, persona_name, 863);
 	}
 
-	public PersonaStateMessage(long timestamp, String steamid_other, Friend.State persona_state, String persona_name, int status_flags) {
-		super(timestamp, steamid_other);
+	public PersonaStateMessage(String steamid_other, Friend.State persona_state, String persona_name, int status_flags) {
+		super(steamid_other);
 		this.persona_state = persona_state;
 		this.persona_name = persona_name;
 		this.status_flags = status_flags;

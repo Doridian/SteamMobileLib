@@ -13,8 +13,8 @@ public class TextMessage extends Message {
 		this.text = json.get("text").toString();
 	}
 
-	public TextMessage(long timestamp, String steamid_other, String text) {
-		super(timestamp, steamid_other);
+	public TextMessage(String steamid_other, String text) {
+		super(steamid_other);
 		this.text = text;
 	}
 

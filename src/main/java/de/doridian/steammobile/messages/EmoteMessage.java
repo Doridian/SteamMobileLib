@@ -8,7 +8,7 @@ public class EmoteMessage extends TextMessage {
 		super(json);
 	}
 
-	public EmoteMessage(long timestamp, String steamid_other, String text) {
-		super(timestamp, steamid_other, text);
+	public EmoteMessage(String steamid_other, String text) {
+		super(steamid_other, text);
 	}
 }

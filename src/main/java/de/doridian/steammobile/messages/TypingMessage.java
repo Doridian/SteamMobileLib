@@ -8,7 +8,7 @@ public class TypingMessage extends Message {
 		super(json);
 	}
 
-	public TypingMessage(long timestamp, String steamid_other) {
-		super(timestamp, steamid_other);
+	public TypingMessage(String steamid_other) {
+		super(steamid_other);
 	}
 }

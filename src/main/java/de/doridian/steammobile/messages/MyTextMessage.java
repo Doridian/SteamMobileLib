@@ -8,7 +8,7 @@ public class MyTextMessage extends TextMessage {
 		super(json);
 	}
 
-	public MyTextMessage(long timestamp, String steamid_other, String text) {
-		super(timestamp, steamid_other, text);
+	public MyTextMessage(String steamid_other, String text) {
+		super(steamid_other, text);
 	}
 }

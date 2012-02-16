@@ -23,7 +23,7 @@ public abstract class Message {
 
 	public Message(String steamid_other) {
 		this.steamid_other = steamid_other;
-		this.timestamp = 0;
+		this.timestamp = System.currentTimeMillis() / 1000;
 	}
 
 	public void addParameters(Map<String, String> params) { }

@@ -32,6 +32,8 @@
 <li>ISteamUserOAuth/GetGroupList</li>
 <li>ISteamUserOAuth/GetUserSummaries</li>
 <li>ISteamUserOAuth/GetGroupSummaries</li>
+<li>ISteamUserOAuth/GetSteamguardCode (what does this do?)</li>
+<li>ISteamUserOAuth/Search</li>
 <li>ISteamUserWebPresenceOAuth/Logon</li>
 <li>ISteamUserWebPresenceOAuth/Logoff</li>
 <li>ISteamUserWebPresenceOAuth/Message</li>

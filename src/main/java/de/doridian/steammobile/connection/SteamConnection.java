@@ -5,9 +5,12 @@ import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenExcep
 import de.doridian.steammobile.connection.exceptions.LoginException;
 import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
 import de.doridian.steammobile.friend.Friend;
+import de.doridian.steammobile.friend.Group;
 import de.doridian.steammobile.methods.BaseMethod;
 import de.doridian.steammobile.methods.ISteamOAuth2.GetTokenWithCredentials;
 import de.doridian.steammobile.methods.ISteamUserOAuth.GetFriendList;
+import de.doridian.steammobile.methods.ISteamUserOAuth.GetGroupList;
+import de.doridian.steammobile.methods.ISteamUserOAuth.GetGroupSummaries;
 import de.doridian.steammobile.methods.ISteamUserOAuth.GetUserSummaries;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
@@ -24,6 +27,7 @@ public class SteamConnection {
 	private String umqid;
 
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
+	public Map<String, Group> groups = new HashMap<String, Group>();
 
 	public SteamConnection() {
 		long x = Main.random.nextLong();
@@ -31,7 +35,7 @@ public class SteamConnection {
 		umqid = String.valueOf(x);
 	}
 
-	public void loadFriendsList() throws RequestException {
+	public void loadFriendList() throws RequestException {
 		GetFriendList msg = new GetFriendList(this);
 		try {
 			JSONObject ret = msg.send();
@@ -39,7 +43,7 @@ public class SteamConnection {
 			friends.clear();
 			for(Object ent : arr) {
 				JSONObject entj = (JSONObject)ent;
-				Friend friend = new Friend(entj.get("steamid").toString(), entj.get("relationship").toString(), Long.valueOf(entj.get("friend_since").toString()));
+				Friend friend = new Friend(this, entj.get("steamid").toString(), entj.get("relationship").toString(), Long.valueOf(entj.get("friend_since").toString()));
 				friends.put(friend.steamid, friend);
 			}
 		} catch(RequestException e) {
@@ -49,15 +53,34 @@ public class SteamConnection {
 		}
 	}
 
-	private static final int MAX_FRIEND_DETAILS_PER_REQUEST = 5;
-	public void loadFriendsDetails() throws RequestException {
+	public void loadGroupList() throws RequestException {
+		GetGroupList msg = new GetGroupList(this);
+		try {
+			JSONObject ret = msg.send();
+			JSONArray arr = (JSONArray)ret.get("groups");
+			friends.clear();
+			for(Object ent : arr) {
+				JSONObject entj = (JSONObject)ent;
+				Group group = new Group(this, entj.get("steamid").toString());
+				groups.put(group.steamid, group);
+			}
+		} catch(RequestException e) {
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static final int MAX_DETAILS_PER_REQUEST = 5;
+
+	public void loadFriendDetails() throws RequestException {
 		GetUserSummaries msg = new GetUserSummaries(this);
 		try {
 			Set<String> tsids = friends.keySet();
 			String[] sids = tsids.toArray(new String[tsids.size()]);
-			for(int i = 0; i < sids.length; i += MAX_FRIEND_DETAILS_PER_REQUEST) {
+			for(int i = 0; i < sids.length; i += MAX_DETAILS_PER_REQUEST) {
 				tsids = new HashSet<String>();
-				for(int j = 0; j < MAX_FRIEND_DETAILS_PER_REQUEST; j++) {
+				for(int j = 0; j < MAX_DETAILS_PER_REQUEST; j++) {
 					int k = i + j;
 					if(k >= sids.length) break;
 					tsids.add(sids[k]);
@@ -67,6 +90,32 @@ public class SteamConnection {
 				for(Object ent : res) {
 					JSONObject entj = (JSONObject)ent;
 					friends.get(entj.get("steamid").toString()).setFullStats(entj);
+				}
+			}
+		} catch(RequestException e) {
+			throw e;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void loadGroupDetails() throws RequestException {
+		GetGroupSummaries msg = new GetGroupSummaries(this);
+		try {
+			Set<String> tsids = groups.keySet();
+			String[] sids = tsids.toArray(new String[tsids.size()]);
+			for(int i = 0; i < sids.length; i += MAX_DETAILS_PER_REQUEST) {
+				tsids = new HashSet<String>();
+				for(int j = 0; j < MAX_DETAILS_PER_REQUEST; j++) {
+					int k = i + j;
+					if(k >= sids.length) break;
+					tsids.add(sids[k]);
+				}
+				msg.setSteamIDs(tsids);
+				JSONArray res = (JSONArray)msg.send().get("groups");
+				for(Object ent : res) {
+					JSONObject entj = (JSONObject)ent;
+					groups.get(entj.get("steamid").toString()).setFullStats(entj);
 				}
 			}
 		} catch(RequestException e) {

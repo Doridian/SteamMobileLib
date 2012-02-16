@@ -7,6 +7,7 @@ import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenExcep
 import de.doridian.steammobile.connection.exceptions.LoginException;
 import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
 import de.doridian.steammobile.friend.Friend;
+import de.doridian.steammobile.friend.Group;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
 import de.doridian.steammobile.methods.RequestException;
@@ -83,8 +84,19 @@ public class Main {
 			tryLogin(user, password, token);
 			handler = new MessageHandler(connection);
 			handler.logon();
-			connection.loadFriendsList();
-			connection.loadFriendsDetails();
+
+			connection.loadFriendList();
+			connection.loadFriendDetails();
+			System.out.println("Done friends!");
+
+			connection.loadGroupList();
+			connection.loadGroupDetails();
+			System.out.println("Done groups!");
+
+			for(Group group : connection.groups.values()) {
+				System.out.println(group.steamid + " = " + group.name);
+			}
+
 			for(Friend friend : connection.friends.values()) {
 				System.out.println(friend.steamid + " = " + friend.personaname);
 			}

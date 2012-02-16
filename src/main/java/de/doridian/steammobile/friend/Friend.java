@@ -1,10 +1,14 @@
 package de.doridian.steammobile.friend;
 
 import de.doridian.steammobile.connection.SteamConnection;
-import de.doridian.steammobile.methods.ISteamUserOAuth.GetUserSummaries;
+import de.doridian.steammobile.methods.ISteamUserOAuth.GetGroupSummaries;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class Friend {
 	public enum State {
@@ -32,6 +36,8 @@ public class Friend {
 		}
 	}
 
+	private final SteamConnection connection;
+
 	//Filled always
 	public final String steamid;
 	public String relationship;
@@ -47,23 +53,26 @@ public class Friend {
 	
 	public Group primarygroup = null;
 	public long timecreated = 0;
+
+	public HashMap<String, Object> infos = new HashMap<String, Object>();
 	
-	public Friend(String steamid, String relationship, long friend_since) {
+	public Friend(SteamConnection connection, String steamid, String relationship, long friend_since) {
 		this.steamid = steamid;
 		this.relationship = relationship;
 		this.friend_since = friend_since;
+		this.connection = connection;
 	}
 
-	public void getFullStats(SteamConnection connection) throws RequestException {
-		getFullStats(connection, false);
+	public void getFullStats() throws RequestException {
+		getFullStats(false);
 	}
 
-	public void getFullStats(SteamConnection connection, boolean force) throws RequestException {
+	public void getFullStats(boolean force) throws RequestException {
 		if(personaname != null && !force) {
 			return;
 		}
 
-		GetUserSummaries msg = new GetUserSummaries(connection);
+		GetGroupSummaries msg = new GetGroupSummaries(connection);
 		msg.setSteamIDs(this.steamid);
 		setFullStats((JSONObject)(((JSONArray)msg.send().get("players")).get(0)));
 	}
@@ -79,14 +88,19 @@ public class Friend {
 		}
 
 		if(friend.containsKey("avatar")) {
-			avatar = new Avatar(friend.get("avatar").toString(), friend.get("avatarmedium").toString(), friend.get("avatarfull").toString());
+			avatar = new Avatar(friend);
 		}
 
 		if(friend.containsKey("primaryclanid")) {
-			primarygroup = new Group(friend.get("primaryclanid").toString());
+			primarygroup = new Group(connection, friend.get("primaryclanid").toString());
 		}
 		if(friend.containsKey("timecreated")) {
 			timecreated = Long.valueOf(friend.get("timecreated").toString());
+		}
+
+		infos.clear();
+		for(Map.Entry<Object, Object> ent : (Set<Map.Entry<Object, Object>>)friend.entrySet()) {
+			infos.put(ent.getKey().toString(), ent.getValue());
 		}
 	}
 }

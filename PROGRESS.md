@@ -10,11 +10,11 @@
 <li>Going online</li>
 <li>Message querying</li>
 <li>Implementation for the other message types (Personastate, Typing)</li>
+<li>Standard message polling loop thread with message callbacks</li>
 </ul>
 
 <h2>ToDo</h2>
 <ul>
-<li>Standard message polling loop thread with message callbacks</li>
 <li>Group list download</li>
 <li>Looking for other possible messages</li>
 </ul>

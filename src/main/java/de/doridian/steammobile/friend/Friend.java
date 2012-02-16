@@ -14,7 +14,7 @@ public class Friend {
 	public enum State {
 		OFFLINE(0),
 		ONLINE(1),
-		INGAME(2),
+		BUSY(2),
 		AWAY(3),
 		SNOOZE(4),
 		INVALID(-1);

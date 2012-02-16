@@ -17,6 +17,8 @@
 <h2>ToDo</h2>
 <ul>
 <li>Looking for other possible messages</li>
+<li>Looking for other API method</li>
+<li>Implementing the Web API (adding friends and removing friends)?</li>
 </ul>
 
 
@@ -29,6 +31,7 @@
 <li>ISteamUserOAuth/GetFriendList</li>
 <li>ISteamUserOAuth/GetGroupList</li>
 <li>ISteamUserOAuth/GetUserSummaries</li>
+<li>ISteamUserOAuth/GetGroupSummaries</li>
 <li>ISteamUserWebPresenceOAuth/Logon</li>
 <li>ISteamUserWebPresenceOAuth/Logoff</li>
 <li>ISteamUserWebPresenceOAuth/Message</li>

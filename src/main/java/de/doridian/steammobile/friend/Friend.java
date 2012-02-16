@@ -7,7 +7,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class Friend {
-	enum State {
+	public enum State {
 		OFFLINE(0),
 		ONLINE(1),
 		INGAME(2),

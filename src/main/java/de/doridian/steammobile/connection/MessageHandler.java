@@ -2,6 +2,7 @@ package de.doridian.steammobile.connection;
 
 import de.doridian.steammobile.connection.SteamConnection;
 import de.doridian.steammobile.messages.Message;
+import de.doridian.steammobile.messages.PersonaStateMessage;
 import de.doridian.steammobile.messages.TextMessage;
 import de.doridian.steammobile.messages.TypingMessage;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Logon;
@@ -55,8 +56,14 @@ public class MessageHandler {
 						entj.get("steamid_from").toString(),
 						entj.get("text").toString()
 					));
-				/*} else if(type.equals("personastate")) {
-					//Ignored atm!*/
+				} else if(type.equals("personastate")) {
+					ret.add(new PersonaStateMessage(
+						Long.valueOf(entj.get("timestamp").toString()),
+						entj.get("steamid_from").toString(),
+						Integer.valueOf(entj.get("persona_state").toString()),
+						entj.get("persona_name").toString(),
+						Integer.valueOf(entj.get("status_flags").toString())
+					));
 				} else if(type.equals("typing")) {
 					ret.add(new TypingMessage(
 						Long.valueOf(entj.get("timestamp").toString()),

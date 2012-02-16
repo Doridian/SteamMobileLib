@@ -3,6 +3,7 @@ package de.doridian.steammobile.connection;
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.PersonaStateMessage;
+import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Logoff;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Logon;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Poll;
 import de.doridian.steammobile.methods.RequestException;
@@ -21,6 +22,8 @@ public class MessageHandler {
 
 	private String lastMessageID;
 
+	private boolean isLoggedOn = false;
+
 	public MessageHandler(SteamConnection connection) {
 		this.connection = connection;
 		this.defaultMessageListener = new DefaultMessageListener();
@@ -28,11 +31,21 @@ public class MessageHandler {
 	}
 
 	public void logon() throws RequestException {
+		if(isLoggedOn) return;
 		Logon msg = new Logon(connection);
 		lastMessageID = msg.send().get("message").toString();
+		isLoggedOn = true;
+	}
+	
+	public void logoff() throws RequestException {
+		if(!isLoggedOn) return;
+		Logoff msg = new Logoff(connection);
+		msg.send();
+		isLoggedOn = false;
 	}
 	
 	public void sendMessage(Message message) throws RequestException {
+		if(!isLoggedOn) return;
 		de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message msg = new de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message(connection);
 		msg.setMessage(message);
 		msg.send();
@@ -94,6 +107,7 @@ public class MessageHandler {
 	}
 
 	public List<Message> getMessages() throws RequestException {
+		if(!isLoggedOn) return null;
 		if(isThreaded) {
 			if(isThreadPollable) {
 				List<Message> queue;
@@ -128,24 +142,26 @@ public class MessageHandler {
 			public void run() {
 				while(isThreaded) {
 					try {
-						List<Message> msgs = __getMessages();
-						if(usePolling) {
-							synchronized(threadLock) {
-								messageQueue.addAll(msgs);
-							}
-						} else {
-							for(Message msg : msgs) {
-								//Global listeners
-								for(MessageListenerMethod item : globalListeners) {
-									item.method.invoke(item.listener, msg);
+						if(isLoggedOn) {
+							List<Message> msgs = __getMessages();
+							if(usePolling) {
+								synchronized(threadLock) {
+									messageQueue.addAll(msgs);
 								}
+							} else {
+								for(Message msg : msgs) {
+									//Global listeners
+									for(MessageListenerMethod item : globalListeners) {
+										item.method.invoke(item.listener, msg);
+									}
 
-								//Specific listeners
-								Class<? extends Message> clazz = msg.getClass();
-								if(!messageListeners.containsKey(clazz)) continue;
-								HashSet<MessageListenerMethod> methods = messageListeners.get(clazz);
-								for(MessageListenerMethod item : methods) {
-									item.method.invoke(item.listener, msg);
+									//Specific listeners
+									Class<? extends Message> clazz = msg.getClass();
+									if(!messageListeners.containsKey(clazz)) continue;
+									HashSet<MessageListenerMethod> methods = messageListeners.get(clazz);
+									for(MessageListenerMethod item : methods) {
+										item.method.invoke(item.listener, msg);
+									}
 								}
 							}
 						}

@@ -18,7 +18,6 @@ import java.util.Scanner;
 
 public class Main {
 	public static final Scanner input = new Scanner(System.in);
-	public static final Random random = new Random();
 
 	private static final String AUTHFILE = "auth.cfg";
 

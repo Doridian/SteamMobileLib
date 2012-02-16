@@ -16,21 +16,20 @@ import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class SteamConnection {
 	private String steamid;
 	private String access_token;
 	private String umqid;
 
+	public static final Random random = new Random();
+
 	public Map<String, Friend> friends = new HashMap<String, Friend>();
 	public Map<String, Group> groups = new HashMap<String, Group>();
 
 	public SteamConnection() {
-		long x = Main.random.nextLong();
+		long x = random.nextLong();
 		if(x < 0) x = -x;
 		umqid = String.valueOf(x);
 	}

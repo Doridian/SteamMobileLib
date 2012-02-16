@@ -71,7 +71,7 @@ public class SteamConnection {
 		}
 	}
 
-	private static final int MAX_DETAILS_PER_REQUEST = 5;
+	private static final int MAX_DETAILS_PER_REQUEST = 90;
 
 	public void loadFriendDetails() throws RequestException {
 		GetUserSummaries msg = new GetUserSummaries(this);

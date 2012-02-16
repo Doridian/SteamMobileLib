@@ -1,6 +1,7 @@
 package de.doridian.steammobile;
 
 import de.doridian.steammobile.connection.MessageHandler;
+import de.doridian.steammobile.connection.MessageListener;
 import de.doridian.steammobile.connection.SteamConnection;
 import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenException;
 import de.doridian.steammobile.connection.exceptions.LoginException;
@@ -8,12 +9,9 @@ import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenExcep
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
-import de.doridian.steammobile.methods.ISteamOAuth2.GetTokenWithCredentials;
 import de.doridian.steammobile.methods.RequestException;
-import org.json.simple.JSONObject;
 
 import java.io.*;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -96,29 +94,11 @@ public class Main {
 			return;
 		}
 
-		new Thread() {
-			@Override
-			public void run() {
-				while(isRunning) {
-					try {
-						List<Message> newMessages = handler.getMessages();
-						for(Message msg : newMessages) {
-							if(msg instanceof TextMessage) {
-								TextMessage txtmsg = (TextMessage)msg;
-								System.out.println("<" + txtmsg.steamid_other + "> " + txtmsg.text);
-							}
-						}
-						Thread.sleep(5000);
-					} catch(Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}.start();
+		handler.registerListener(new MainMessageListener());
+
+		handler.startGetMessagesLoop();
 	}
 
-
-	
 	public static void writeAuthFile(String username, String password, String token) {
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter(AUTHFILE));
@@ -127,7 +107,20 @@ public class Main {
 			writer.println(token);
 			writer.close();
 		} catch(Exception e) {
-			
+			System.out.println("Writing authentication file failed because:");
+			e.printStackTrace();
+		}
+	}
+
+	public static class MainMessageListener implements MessageListener {
+		@Handler
+		public void onTextMsg(TextMessage msg) {
+			System.out.println("<" + msg.steamid_other + "> " + msg.text);
+		}
+
+		@Handler
+		public void onMsg(Message msg) {
+			System.out.println("[" + msg.steamid_other + "] " + msg.getType());
 		}
 	}
 }

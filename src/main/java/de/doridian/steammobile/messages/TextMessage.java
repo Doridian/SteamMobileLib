@@ -1,17 +1,21 @@
 package de.doridian.steammobile.messages;
 
+import org.json.simple.JSONObject;
+
 import java.util.Map;
 
+@Message.Type("saytext")
 public class TextMessage extends Message {
 	public final String text;
+
+	public TextMessage(JSONObject json) {
+		super(json);
+		this.text = json.get("text").toString();
+	}
+
 	public TextMessage(long timestamp, String steamid_other, String text) {
 		super(timestamp, steamid_other);
 		this.text = text;
-	}
-
-	@Override
-	public String getType() {
-		return "saytext";
 	}
 
 	@Override

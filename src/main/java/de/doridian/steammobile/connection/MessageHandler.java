@@ -49,28 +49,11 @@ public class MessageHandler {
 			JSONArray arr = (JSONArray)obj.get("messages");
 			for(Object ent : arr) {
 				JSONObject entj = (JSONObject)ent;
-				String type = entj.get("type").toString().toLowerCase();
-				if(type.equals("saytext")) {
-					ret.add(new TextMessage(
-						Long.valueOf(entj.get("timestamp").toString()),
-						entj.get("steamid_from").toString(),
-						entj.get("text").toString()
-					));
-				} else if(type.equals("personastate")) {
-					ret.add(new PersonaStateMessage(
-						Long.valueOf(entj.get("timestamp").toString()),
-						entj.get("steamid_from").toString(),
-						Integer.valueOf(entj.get("persona_state").toString()),
-						entj.get("persona_name").toString(),
-						Integer.valueOf(entj.get("status_flags").toString())
-					));
-				} else if(type.equals("typing")) {
-					ret.add(new TypingMessage(
-						Long.valueOf(entj.get("timestamp").toString()),
-						entj.get("steamid_from").toString()
-					));
+				Message recvd = Message.craftMessageFromJSON(entj);
+				if(recvd != null) {
+					ret.add(recvd);
 				} else {
-					System.out.println(entj.toJSONString());
+					System.out.println("Unknown message: " + entj.toJSONString());
 				}
 			}
 			return ret;

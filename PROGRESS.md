@@ -30,6 +30,7 @@
 <li>ISteamUserOAuth/GetGroupList</li>
 <li>ISteamUserOAuth/GetUserSummaries</li>
 <li>ISteamUserWebPresenceOAuth/Logon</li>
+<li>ISteamUserWebPresenceOAuth/Logoff</li>
 <li>ISteamUserWebPresenceOAuth/Message</li>
 <li>ISteamUserWebPresenceOAuth/Poll</li>
 <li>ISteamUserWebPresenceOAuth/PollStatus</li>

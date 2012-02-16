@@ -1,6 +1,6 @@
 package de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth;
 
-import de.doridian.steammobile.SteamConnection;
+import de.doridian.steammobile.connection.SteamConnection;
 import de.doridian.steammobile.methods.BaseMethod;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;

@@ -1,9 +1,9 @@
-package de.doridian.steammobile;
+package de.doridian.steammobile.connection;
 
+import de.doridian.steammobile.connection.SteamConnection;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
 import de.doridian.steammobile.messages.TypingMessage;
-import de.doridian.steammobile.methods.ISteamUserOAuth.GetFriendList;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Logon;
 import de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Poll;
 import de.doridian.steammobile.methods.RequestException;
@@ -17,56 +17,27 @@ public class MessageHandler {
 	private SteamConnection connection;
 
 	private String lastMessageID;
-	
-	public List<Friend> friends = new ArrayList<Friend>();
 
 	public MessageHandler(SteamConnection connection) {
 		this.connection = connection;
 	}
 
-	public void logon() {
+	public void logon() throws RequestException {
 		Logon msg = new Logon(connection);
-		try {
-			JSONObject ret = msg.send();
-			lastMessageID = ret.get("message").toString();
-		} catch(RequestException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
-	}
-
-	public void loadFriendsList() {
-		GetFriendList msg = new GetFriendList(connection);
-		try {
-			JSONObject ret = msg.send();
-			JSONArray arr = (JSONArray)ret.get("friends");
-			friends.clear();
-			for(Object ent : arr) {
-				JSONObject entj = (JSONObject)ent;
-				friends.add(new Friend(entj.get("steamid").toString(), entj.get("relationship").toString(), Long.valueOf(entj.get("friend_since").toString())));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+		lastMessageID = msg.send().get("message").toString();
 	}
 	
-	public void sendMessage(Message message) {
+	public void sendMessage(Message message) throws RequestException {
 		de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message msg = new de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth.Message(connection);
 		msg.setMessage(message);
-		try {
-			msg.send();
-		} catch(RequestException e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+		msg.send();
 	}
 
-	public List<Message> getMessages() {
+	public List<Message> getMessages() throws RequestException {
 		Poll msg = new Poll(connection);
 		msg.setLastMessageID(lastMessageID);
+		List<Message> ret = new ArrayList<Message>();
 		try {
-			List<Message> ret = new ArrayList<Message>();
 			JSONObject obj = msg.send();
 
 			if(obj.containsKey("messagelast")) {
@@ -84,20 +55,23 @@ public class MessageHandler {
 						entj.get("steamid_from").toString(),
 						entj.get("text").toString()
 					));
-				} else if(type.equals("personastate")) {
-					//Ignored atm!
+				/*} else if(type.equals("personastate")) {
+					//Ignored atm!*/
 				} else if(type.equals("typing")) {
 					ret.add(new TypingMessage(
 						Long.valueOf(entj.get("timestamp").toString()),
 						entj.get("steamid_from").toString()
 					));
+				} else {
+					System.out.println(entj.toJSONString());
 				}
 			}
 			return ret;
 		} catch(RequestException e) {
-			e.printStackTrace();
-			System.exit(0);
-			return null;
+			if(e.error.equalsIgnoreCase("Timeout")) {
+				return ret;
+			}
+			throw e;
 		}
 	}
 }

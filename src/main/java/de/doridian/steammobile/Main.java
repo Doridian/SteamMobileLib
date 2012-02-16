@@ -1,8 +1,16 @@
 package de.doridian.steammobile;
 
+import de.doridian.steammobile.connection.MessageHandler;
+import de.doridian.steammobile.connection.SteamConnection;
+import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenException;
+import de.doridian.steammobile.connection.exceptions.LoginException;
+import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
+import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
+import de.doridian.steammobile.methods.ISteamOAuth2.GetTokenWithCredentials;
 import de.doridian.steammobile.methods.RequestException;
+import org.json.simple.JSONObject;
 
 import java.io.*;
 import java.util.List;
@@ -24,6 +32,35 @@ public class Main {
 		connect();
 	}
 
+	private static void tryLogin(String username, String password, String token) {
+		try {
+			connection.tryLogin(username, password, token);
+		} catch(LoginException e) {
+			if(e instanceof InvalidSteamguardTokenException) {
+				System.out.println("Invalid steam guard token.");
+				System.out.print("Retry (Y/N)? ");
+				if(Main.input.nextLine().toLowerCase().startsWith("n")) {
+					System.exit(0);
+				} else {
+					tryLogin(username, password, null);
+				}
+			} else if(e instanceof RequireSteamguardTokenException) {
+				System.out.print("Please enter the steam guard code you received: ");
+				token = Main.input.nextLine();
+				if(token.isEmpty()) {
+					System.exit(0);
+				} else {
+					tryLogin(username, password, token);
+				}
+			} else {
+				System.out.println("Unknown error: " + e.getMessage());
+			}
+			return;
+		}
+
+		writeAuthFile(username, password, token);
+	}
+
 	public static void connect() {
 		File file = new File(AUTHFILE);
 
@@ -43,31 +80,38 @@ public class Main {
 			writeAuthFile(user, password, null);
 		}
 
-		connection = new SteamConnection(user, password, token);
-		handler = new MessageHandler(connection);
-		handler.logon();
-		handler.loadFriendsList();
-		for(Friend friend : handler.friends) {
-			try {
-				friend.getFullStats(connection);
-			} catch(RequestException e) { }
-			System.out.println(friend.steamid + " = " + friend.personaname);
+		try {
+			connection = new SteamConnection();
+			tryLogin(user, password, token);
+			handler = new MessageHandler(connection);
+			handler.logon();
+			connection.loadFriendsList();
+			connection.loadFriendsDetails();
+			for(Friend friend : connection.friends.values()) {
+				System.out.println(friend.steamid + " = " + friend.personaname);
+			}
+		} catch(RequestException e) {
+			e.printStackTrace();
+			System.exit(0);
+			return;
 		}
 
 		new Thread() {
 			@Override
 			public void run() {
 				while(isRunning) {
-					List<Message> newMessages = handler.getMessages();
-					for(Message msg : newMessages) {
-						if(msg instanceof TextMessage) {
-							TextMessage txtmsg = (TextMessage)msg;
-							System.out.println("<" + txtmsg.steamid_other + "> " + txtmsg.text);
-						}
-					}
 					try {
+						List<Message> newMessages = handler.getMessages();
+						for(Message msg : newMessages) {
+							if(msg instanceof TextMessage) {
+								TextMessage txtmsg = (TextMessage)msg;
+								System.out.println("<" + txtmsg.steamid_other + "> " + txtmsg.text);
+							}
+						}
 						Thread.sleep(5000);
-					} catch(Exception e) { }
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}.start();

@@ -1,6 +1,6 @@
 package de.doridian.steammobile.methods.ISteamUserOAuth;
 
-import de.doridian.steammobile.SteamConnection;
+import de.doridian.steammobile.connection.SteamConnection;
 import de.doridian.steammobile.methods.BaseMethod;
 
 public class GetGroupList extends BaseMethod {

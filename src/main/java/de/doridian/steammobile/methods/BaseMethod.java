@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -40,6 +41,21 @@ public abstract class BaseMethod {
 		return true;
 	}
 	
+	public URL getBaseURL() throws MalformedURLException {
+		if(isSSL()) {
+			return new URL(BASEURL_SSL);
+		} else {
+			return new URL(BASEURL);
+		}
+	}
+
+	public URL getURL() throws MalformedURLException {
+		Class clazz = this.getClass();
+		Package pkg = clazz.getPackage();
+		Package basePkg = BaseMethod.class.getPackage();
+		return new URL(getBaseURL(), pkg.getName().substring(basePkg.getName().length() + 1).replace('.', '/') + "/" + clazz.getSimpleName() + "/v0001");
+	}
+	
 	protected JSONObject doRequest(Map<String, String> data) throws RequestException {
 		if(data == null) {
 			data = new HashMap<String, String>();
@@ -56,18 +72,7 @@ public abstract class BaseMethod {
 		}
 
 		try {
-			Class clazz = this.getClass();
-			Package pkg = clazz.getPackage();
-			Package basePkg = BaseMethod.class.getPackage();
-	
-			URL url;
-			if(isSSL()) {
-				url = new URL(BASEURL_SSL);
-			} else {
-				url = new URL(BASEURL);
-			}
-			
-			url = new URL(url, pkg.getName().substring(basePkg.getName().length() + 1).replace('.', '/') + "/" + clazz.getSimpleName() + "/v0001");
+			URL url = getURL();
 			HttpURLConnection conn;
 
 			if(isPOST()) {

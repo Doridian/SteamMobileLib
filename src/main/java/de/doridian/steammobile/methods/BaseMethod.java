@@ -88,13 +88,11 @@ public abstract class BaseMethod {
 				}
 				url = new URL(sb.toString());
 				conn = (HttpURLConnection)url.openConnection();
-				System.out.println(url);
 			}
 
 			String cookies = getCookies();
 			if(cookies != null) {
 				conn.setRequestProperty("cookie", cookies);
-				System.out.println(cookies);
 			}
 
 			InputStreamReader reader = new InputStreamReader(conn.getInputStream());

@@ -3,10 +3,10 @@ package de.doridian.steammobile.connection;
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.PersonaStateMessage;
+import de.doridian.steammobile.methods.RequestException;
 import de.doridian.steammobile.methods.api.ISteamWebUserPresenceOAuth.Logoff;
 import de.doridian.steammobile.methods.api.ISteamWebUserPresenceOAuth.Logon;
 import de.doridian.steammobile.methods.api.ISteamWebUserPresenceOAuth.Poll;
-import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 

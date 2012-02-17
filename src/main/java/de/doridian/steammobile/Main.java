@@ -3,6 +3,7 @@ package de.doridian.steammobile;
 import de.doridian.steammobile.connection.MessageHandler;
 import de.doridian.steammobile.connection.MessageListener;
 import de.doridian.steammobile.connection.SteamConnection;
+import de.doridian.steammobile.connection.WebConnection;
 import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenException;
 import de.doridian.steammobile.connection.exceptions.LoginException;
 import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
@@ -13,7 +14,6 @@ import de.doridian.steammobile.messages.TextMessage;
 import de.doridian.steammobile.methods.RequestException;
 
 import java.io.*;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -23,6 +23,7 @@ public class Main {
 
 	public static SteamConnection connection;
 	public static MessageHandler handler;
+	public static WebConnection webConnection;
 
 	public static boolean isRunning = true;
 	
@@ -81,6 +82,9 @@ public class Main {
 		try {
 			connection = new SteamConnection();
 			tryLogin(user, password, token);
+
+			webConnection = new WebConnection(connection);
+			webConnection.login();
 
 			handler = new MessageHandler(connection);
 			handler.logon();

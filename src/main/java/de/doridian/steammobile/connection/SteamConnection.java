@@ -6,14 +6,13 @@ import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenExcep
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.friend.Group;
 import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.RequestException;
 import de.doridian.steammobile.methods.api.BaseAPIMethod;
-import de.doridian.steammobile.methods.web.BaseWebMethod;
 import de.doridian.steammobile.methods.api.ISteamOAuth2.GetTokenWithCredentials;
 import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetFriendList;
 import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetGroupList;
 import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetGroupSummaries;
 import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetUserSummaries;
-import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -21,7 +20,6 @@ import java.util.*;
 
 public class SteamConnection {
 	private String steamid;
-	private String webcookie;
 	private String access_token;
 	private String umqid;
 
@@ -145,8 +143,6 @@ public class SteamConnection {
 
 		steamid = ret.get("x_steamid").toString();
 		access_token = ret.get("access_token").toString();
-		webcookie = ret.get("x_webcookie").toString();
-		System.out.println(webcookie);
 	}
 
 	public void addUmqid(BaseAPIMethod method) {

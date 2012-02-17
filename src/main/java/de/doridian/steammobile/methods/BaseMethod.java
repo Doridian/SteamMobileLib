@@ -43,6 +43,7 @@ public abstract class BaseMethod {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected JSONObject doRequest(Map<String, String> data) throws RequestException {
 		if(data == null) {
 			data = new HashMap<String, String>();
@@ -65,9 +66,9 @@ public abstract class BaseMethod {
 					else
 						writer.write('&');
 
-					writer.write(URLEncoder.encode(param.getKey()));
+					writer.write(URLEncoder.encode(param.getKey(), "UTF-8"));
 					writer.write('=');
-					writer.write(URLEncoder.encode(param.getValue()));
+					writer.write(URLEncoder.encode(param.getValue(), "UTF-8"));
 				}
 				writer.close();
 			} else {
@@ -81,17 +82,19 @@ public abstract class BaseMethod {
 					else
 						sb.append('&');
 
-					sb.append(URLEncoder.encode(param.getKey()));
+					sb.append(URLEncoder.encode(param.getKey(), "UTF-8"));
 					sb.append('=');
-					sb.append(URLEncoder.encode(param.getValue()));
+					sb.append(URLEncoder.encode(param.getValue(),"UTF-8"));
 				}
 				url = new URL(sb.toString());
 				conn = (HttpURLConnection)url.openConnection();
+				System.out.println(url);
 			}
 
 			String cookies = getCookies();
 			if(cookies != null) {
 				conn.setRequestProperty("cookie", cookies);
+				System.out.println(cookies);
 			}
 
 			InputStreamReader reader = new InputStreamReader(conn.getInputStream());
@@ -100,6 +103,11 @@ public abstract class BaseMethod {
 
 			if(ret.containsKey("error") && !ret.get("error").toString().toLowerCase().equals("ok")) {
 				throw new RequestException((String)ret.get("error"), (String)ret.get("x_errorcode"), (String)ret.get("error_description"));
+			}
+			
+			cookies = conn.getHeaderField("set-cookie");
+			if(cookies != null) {
+				ret.put("cookie", cookies);
 			}
 
 			return ret;

@@ -1,7 +1,7 @@
 package de.doridian.steammobile.methods.ISteamUserOAuth;
 
 import de.doridian.steammobile.connection.SteamConnection;
-import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.BaseAPIMethod;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 
@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetUserSummaries extends BaseMethod {
+public class GetUserSummaries extends BaseAPIMethod {
 	public GetUserSummaries(SteamConnection connection) {
 		connection.addAuthData(this, true, true, false);
 	}

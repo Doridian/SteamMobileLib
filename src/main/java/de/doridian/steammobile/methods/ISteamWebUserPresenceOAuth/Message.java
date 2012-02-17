@@ -1,14 +1,14 @@
 package de.doridian.steammobile.methods.ISteamWebUserPresenceOAuth;
 
 import de.doridian.steammobile.connection.SteamConnection;
-import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.BaseAPIMethod;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Message extends BaseMethod {
+public class Message extends BaseAPIMethod {
 	public Message(SteamConnection connection) {
 		connection.addAuthData(this, false, true, true);
 	}

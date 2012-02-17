@@ -1,13 +1,13 @@
 package de.doridian.steammobile.methods.ISteamOAuth2;
 
-import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.BaseAPIMethod;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GetTokenWithCredentials extends BaseMethod {
+public class GetTokenWithCredentials extends BaseAPIMethod {
 	private static final String CLIENTID = "DE45CD61";
 	
 	private String username;

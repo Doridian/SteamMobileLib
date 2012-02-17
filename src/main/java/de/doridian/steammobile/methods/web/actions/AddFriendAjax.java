@@ -13,9 +13,9 @@ public class AddFriendAjax extends BaseWebMethod {
 		connection.addAuthData(this, true, true);
 	}
 
-	private String steamid = null;
-	public void setSteamID(String steamid) {
-		this.steamid = steamid;
+	private String steamid_other = null;
+	public void setSteamIDOther(String steamid_other) {
+		this.steamid_other = steamid_other;
 	}
 
 	@Override
@@ -24,8 +24,8 @@ public class AddFriendAjax extends BaseWebMethod {
 			data = new HashMap<String, String>();
 		}
 
-		if(steamid != null) {
-			data.put("steamid", steamid);
+		if(steamid_other != null) {
+			data.put("steamid", steamid_other);
 		}
 
 		return super.doRequest(data);

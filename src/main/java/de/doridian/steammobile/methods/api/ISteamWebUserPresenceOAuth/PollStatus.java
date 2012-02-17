@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class PollStatus extends BaseAPIMethod {
 	public PollStatus(SteamConnection connection) {
-		connection.addAuthData(this, true, false, true);
+		connection.addAuthData(this, true, false);
+		connection.addUmqid(this);
 	}
 
 	private String lastMessageID;

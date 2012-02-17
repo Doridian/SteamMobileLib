@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class RemoveFriendAjax extends BaseWebMethod {
 	public RemoveFriendAjax(SteamConnection connection) {
-		connection.addSessionID(this);
+		connection.addAuthData(this, true, true);
 	}
 
 	private String steamid = null;

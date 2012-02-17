@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class Message extends BaseAPIMethod {
 	public Message(SteamConnection connection) {
-		connection.addAuthData(this, false, true, true);
+		connection.addAuthData(this, false, true);
+		connection.addUmqid(this);
 	}
 	
 	private de.doridian.steammobile.messages.Message message;

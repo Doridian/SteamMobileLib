@@ -5,7 +5,7 @@ import de.doridian.steammobile.methods.api.BaseAPIMethod;
 
 public class GetSteamguardCode extends BaseAPIMethod {
 	public GetSteamguardCode(SteamConnection connection) {
-		connection.addAuthData(this, false, true, false);
+		connection.addAuthData(this, false, true);
 	}
 
 	@Override

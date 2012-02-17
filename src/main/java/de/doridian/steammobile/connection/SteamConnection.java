@@ -5,6 +5,7 @@ import de.doridian.steammobile.connection.exceptions.LoginException;
 import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.friend.Group;
+import de.doridian.steammobile.methods.BaseMethod;
 import de.doridian.steammobile.methods.api.BaseAPIMethod;
 import de.doridian.steammobile.methods.web.BaseWebMethod;
 import de.doridian.steammobile.methods.api.ISteamOAuth2.GetTokenWithCredentials;
@@ -148,16 +149,14 @@ public class SteamConnection {
 		System.out.println(webcookie);
 	}
 
-	public void addAuthData(BaseAPIMethod method, boolean addSteamid, boolean addToken, boolean addUmqid) {
+	public void addUmqid(BaseAPIMethod method) {
+		method.setUmqid(umqid);
+	}
+
+	public void addAuthData(BaseMethod method, boolean addSteamid, boolean addToken) {
 		if(addSteamid)
 			method.setSteamID(steamid);
 		if(addToken)
 			method.setAccessToken(access_token);
-		if(addUmqid)
-			method.setUmqid(umqid);
-	}
-
-	public void addSessionID(BaseWebMethod method) {
-
 	}
 }

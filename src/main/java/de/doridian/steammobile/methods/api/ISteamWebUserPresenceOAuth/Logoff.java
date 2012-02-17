@@ -5,6 +5,7 @@ import de.doridian.steammobile.methods.api.BaseAPIMethod;
 
 public class Logoff extends BaseAPIMethod {
 	public Logoff(SteamConnection connection) {
-		connection.addAuthData(this, false, true, true);
+		connection.addAuthData(this, false, true);
+		connection.addUmqid(this);
 	}
 }

@@ -28,6 +28,11 @@ public abstract class BaseWebMethod extends BaseMethod {
 	}
 
 	@Override
+	protected String getCookies() {
+		return "forceMobile=1;mobileClient=ios;mobileClientVersion=1291812;Steam_Language=english;steamLogin="+steamid+"||oauth:"+access_token;
+	}
+
+	@Override
 	public URL getURL() throws MalformedURLException {
 		Class clazz = this.getClass();
 		Package pkg = clazz.getPackage();

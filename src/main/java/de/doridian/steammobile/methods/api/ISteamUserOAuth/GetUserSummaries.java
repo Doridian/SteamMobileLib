@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class GetUserSummaries extends BaseAPIMethod {
 	public GetUserSummaries(SteamConnection connection) {
-		connection.addAuthData(this, true, true, false);
+		connection.addAuthData(this, true, true);
 	}
 	
 	private String steamIDs;

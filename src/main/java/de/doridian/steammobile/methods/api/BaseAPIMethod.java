@@ -13,16 +13,6 @@ public abstract class BaseAPIMethod extends BaseMethod {
 	private static final String BASEURL = "http://api.steampowered.com/";
 	private static final String BASEURL_SSL = "https://api.steampowered.com/";
 
-	private String steamid = null;
-	public void setSteamID(String steamid) {
-		this.steamid = steamid;
-	}
-
-	private String access_token = null;
-	public void setAccessToken(String access_token) {
-		this.access_token = access_token;
-	}
-
 	private String umqid = null;
 	public void setUmqid(String umqid) {
 		this.umqid = umqid;

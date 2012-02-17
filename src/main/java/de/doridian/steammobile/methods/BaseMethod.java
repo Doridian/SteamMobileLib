@@ -9,11 +9,22 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseMethod {
 	public JSONObject send() throws RequestException {
 		return doRequest(null);
+	}
+
+	protected String steamid = null;
+	public void setSteamID(String steamid) {
+		this.steamid = steamid;
+	}
+
+	protected String access_token = null;
+	public void setAccessToken(String access_token) {
+		this.access_token = access_token;
 	}
 
 	public boolean isPOST() {
@@ -28,7 +39,15 @@ public abstract class BaseMethod {
 
 	public abstract URL getURL() throws MalformedURLException;
 
+	protected String getCookies() {
+		return null;
+	}
+
 	protected JSONObject doRequest(Map<String, String> data) throws RequestException {
+		if(data == null) {
+			data = new HashMap<String, String>();
+		}
+
 		try {
 			URL url = getURL();
 			HttpURLConnection conn;
@@ -39,39 +58,40 @@ public abstract class BaseMethod {
 				conn.setDoOutput(true);
 
 				OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
-				if(data != null) {
-					boolean isFirst = true;
-					for(Map.Entry<String, String> param : data.entrySet()) {
-						if(isFirst)
-							isFirst = false;
-						else
-							writer.write('&');
+				boolean isFirst = true;
+				for(Map.Entry<String, String> param : data.entrySet()) {
+					if(isFirst)
+						isFirst = false;
+					else
+						writer.write('&');
 
-						writer.write(URLEncoder.encode(param.getKey()));
-						writer.write('=');
-						writer.write(URLEncoder.encode(param.getValue()));
-					}
+					writer.write(URLEncoder.encode(param.getKey()));
+					writer.write('=');
+					writer.write(URLEncoder.encode(param.getValue()));
 				}
 				writer.close();
 			} else {
-				if(data != null) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(url);
-					sb.append('?');
-					boolean isFirst = true;
-					for(Map.Entry<String, String> param : data.entrySet()) {
-						if(isFirst)
-							isFirst = false;
-						else
-							sb.append('&');
+				StringBuilder sb = new StringBuilder();
+				sb.append(url);
+				sb.append('?');
+				boolean isFirst = true;
+				for(Map.Entry<String, String> param : data.entrySet()) {
+					if(isFirst)
+						isFirst = false;
+					else
+						sb.append('&');
 
-						sb.append(URLEncoder.encode(param.getKey()));
-						sb.append('=');
-						sb.append(URLEncoder.encode(param.getValue()));
-					}
-					url = new URL(sb.toString());
+					sb.append(URLEncoder.encode(param.getKey()));
+					sb.append('=');
+					sb.append(URLEncoder.encode(param.getValue()));
 				}
+				url = new URL(sb.toString());
 				conn = (HttpURLConnection)url.openConnection();
+			}
+
+			String cookies = getCookies();
+			if(cookies != null) {
+				conn.setRequestProperty("cookie", cookies);
 			}
 
 			InputStreamReader reader = new InputStreamReader(conn.getInputStream());

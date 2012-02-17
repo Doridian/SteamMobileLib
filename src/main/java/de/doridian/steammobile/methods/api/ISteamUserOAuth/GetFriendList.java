@@ -5,7 +5,7 @@ import de.doridian.steammobile.methods.api.BaseAPIMethod;
 
 public class GetFriendList extends BaseAPIMethod {
 	public GetFriendList(SteamConnection connection) {
-		connection.addAuthData(this, true, true, false);
+		connection.addAuthData(this, true, true);
 	}
 
 	@Override

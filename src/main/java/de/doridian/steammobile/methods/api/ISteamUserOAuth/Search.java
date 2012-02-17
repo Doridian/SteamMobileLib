@@ -10,7 +10,8 @@ import java.util.Map;
 
 public class Search extends BaseAPIMethod {
 	public Search(SteamConnection connection) {
-		connection.addAuthData(this, false, true, false);
+		connection.addAuthData(this, false, true);
+		connection.addUmqid(this);
 	}
 
 	private String keywords;

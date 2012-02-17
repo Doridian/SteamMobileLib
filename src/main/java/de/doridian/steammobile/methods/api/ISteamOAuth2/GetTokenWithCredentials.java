@@ -1,6 +1,6 @@
-package de.doridian.steammobile.methods.ISteamOAuth2;
+package de.doridian.steammobile.methods.api.ISteamOAuth2;
 
-import de.doridian.steammobile.methods.BaseAPIMethod;
+import de.doridian.steammobile.methods.api.BaseAPIMethod;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 

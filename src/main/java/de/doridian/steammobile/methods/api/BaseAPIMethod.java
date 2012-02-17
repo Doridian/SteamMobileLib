@@ -1,14 +1,11 @@
-package de.doridian.steammobile.methods;
+package de.doridian.steammobile.methods.api;
 
+import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 

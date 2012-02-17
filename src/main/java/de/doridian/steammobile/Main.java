@@ -81,6 +81,7 @@ public class Main {
 		try {
 			connection = new SteamConnection();
 			tryLogin(user, password, token);
+			if(true) return;
 			handler = new MessageHandler(connection);
 			handler.logon();
 

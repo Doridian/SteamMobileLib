@@ -1,7 +1,7 @@
 package de.doridian.steammobile.friend;
 
 import de.doridian.steammobile.connection.SteamConnection;
-import de.doridian.steammobile.methods.ISteamUserOAuth.GetGroupSummaries;
+import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetGroupSummaries;
 import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

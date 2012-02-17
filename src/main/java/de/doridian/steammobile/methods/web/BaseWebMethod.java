@@ -1,5 +1,7 @@
-package de.doridian.steammobile.methods;
+package de.doridian.steammobile.methods.web;
 
+import de.doridian.steammobile.methods.BaseMethod;
+import de.doridian.steammobile.methods.RequestException;
 import org.json.simple.JSONObject;
 
 import java.net.MalformedURLException;
@@ -8,8 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class BaseWebMethod extends BaseMethod {
-	private static final String BASEURL = "http://steamcommunity.com/actions/";
-	private static final String BASEURL_SSL = "https://steamcommunity.com/actions/";
+	private static final String BASEURL = "http://steamcommunity.com/";
+	private static final String BASEURL_SSL = "https://steamcommunity.com/";
 
 	private String sessionid = null;
 	public void setSessionID(String sessionid) {
@@ -27,7 +29,10 @@ public abstract class BaseWebMethod extends BaseMethod {
 
 	@Override
 	public URL getURL() throws MalformedURLException {
-		return new URL(getBaseURL(), this.getClass().getSimpleName());
+		Class clazz = this.getClass();
+		Package pkg = clazz.getPackage();
+		Package basePkg = BaseWebMethod.class.getPackage();
+		return new URL(getBaseURL(), pkg.getName().substring(basePkg.getName().length() + 1).replace('.', '/') + "/" + clazz.getSimpleName());
 	}
 
 	@Override

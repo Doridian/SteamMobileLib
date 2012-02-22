@@ -50,11 +50,14 @@ public abstract class BaseMethod {
 		}
 
 		try {
+			System.setProperty("http.agent", "");
+
 			URL url = getURL();
 			HttpURLConnection conn;
 
 			if(isPOST()) {
 				conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
 				conn.setRequestMethod("POST");
 				conn.setDoOutput(true);
 
@@ -68,7 +71,7 @@ public abstract class BaseMethod {
 
 					writer.write(URLEncoder.encode(param.getKey(), "UTF-8"));
 					writer.write('=');
-					writer.write(URLEncoder.encode(param.getValue(), "UTF-8"));
+					writer.write(URLEncoder.encode(param.getValue(), "UTF-8").replace("+", "%20"));
 				}
 				writer.close();
 			} else {
@@ -88,6 +91,7 @@ public abstract class BaseMethod {
 				}
 				url = new URL(sb.toString());
 				conn = (HttpURLConnection)url.openConnection();
+				conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
 			}
 
 			String cookies = getCookies();
@@ -108,6 +112,7 @@ public abstract class BaseMethod {
 				ret.put("cookie", cookies);
 			}
 
+			System.out.println(ret.toJSONString());
 			return ret;
 		} catch(RequestException e) {
 			throw e;

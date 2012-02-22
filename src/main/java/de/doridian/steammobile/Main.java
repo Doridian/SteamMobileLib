@@ -1,5 +1,8 @@
 package de.doridian.steammobile;
 
+import de.doridian.steammobile.auth.base.AuthStorage;
+import de.doridian.steammobile.auth.Credentials;
+import de.doridian.steammobile.auth.impl.FlatFileAuthStorage;
 import de.doridian.steammobile.connection.MessageHandler;
 import de.doridian.steammobile.connection.MessageListener;
 import de.doridian.steammobile.connection.SteamConnection;
@@ -13,7 +16,7 @@ import de.doridian.steammobile.messages.Message;
 import de.doridian.steammobile.messages.TextMessage;
 import de.doridian.steammobile.methods.RequestException;
 
-import java.io.*;
+import java.io.File;
 import java.util.Scanner;
 
 public class Main {
@@ -31,9 +34,9 @@ public class Main {
 		connect();
 	}
 
-	private static void tryLogin(String username, String password, String token) {
+	private static void tryLogin(Credentials credentials, AuthStorage storage) {
 		try {
-			connection.tryLogin(username, password, token);
+			connection.tryLogin(credentials, storage);
 		} catch(LoginException e) {
 			if(e instanceof InvalidSteamguardTokenException) {
 				System.out.println("Invalid steam guard token.");
@@ -41,47 +44,40 @@ public class Main {
 				if(Main.input.nextLine().toLowerCase().startsWith("n")) {
 					System.exit(0);
 				} else {
-					tryLogin(username, password, null);
+					credentials.steamguard_token = null;
+					tryLogin(credentials, storage);
 				}
 			} else if(e instanceof RequireSteamguardTokenException) {
 				System.out.print("Please enter the steam guard code you received: ");
-				token = Main.input.nextLine();
+				String token = Main.input.nextLine();
 				if(token.isEmpty()) {
 					System.exit(0);
 				} else {
-					tryLogin(username, password, token);
+					credentials.steamguard_token = token;
+					tryLogin(credentials, storage);
 				}
 			} else {
 				System.out.println("Unknown error: " + e.getMessage());
 			}
-			return;
 		}
-
-		writeAuthFile(username, password, token);
 	}
 
 	public static void connect() {
-		File file = new File(AUTHFILE);
 
-		String user; String password; String token;
-		try {
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-			user = reader.readLine();
-			password = reader.readLine();
-			token = reader.readLine();
-			reader.close();
-		} catch(Exception e) {
+		Credentials credentials;
+		AuthStorage storage = new FlatFileAuthStorage(new File(AUTHFILE));
+		credentials = storage.getCredentials();
+		if(credentials == null) {
+			credentials = new Credentials();
 			System.out.print("Username: ");
-			user = input.nextLine();
+			credentials.username = input.nextLine();
 			System.out.print("Password: ");
-			password = input.nextLine();
-			token = null;
-			writeAuthFile(user, password, null);
+			credentials.password = input.nextLine();
 		}
 
 		try {
 			connection = new SteamConnection();
-			tryLogin(user, password, token);
+			tryLogin(credentials, storage);
 
 			webConnection = new WebConnection(connection);
 			webConnection.login();
@@ -113,19 +109,6 @@ public class Main {
 		handler.registerListener(new MainMessageListener());
 
 		handler.startGetMessagesLoop();
-	}
-
-	public static void writeAuthFile(String username, String password, String token) {
-		try {
-			PrintWriter writer = new PrintWriter(new FileWriter(AUTHFILE));
-			writer.println(username);
-			writer.println(password);
-			writer.println(token);
-			writer.close();
-		} catch(Exception e) {
-			System.out.println("Writing authentication file failed because:");
-			e.printStackTrace();
-		}
 	}
 
 	public static class MainMessageListener implements MessageListener {

@@ -1,5 +1,7 @@
 package de.doridian.steammobile.connection;
 
+import de.doridian.steammobile.auth.base.AuthStorage;
+import de.doridian.steammobile.auth.Credentials;
 import de.doridian.steammobile.connection.exceptions.InvalidSteamguardTokenException;
 import de.doridian.steammobile.connection.exceptions.LoginException;
 import de.doridian.steammobile.connection.exceptions.RequireSteamguardTokenException;
@@ -16,7 +18,11 @@ import de.doridian.steammobile.methods.api.ISteamUserOAuth.GetUserSummaries;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
 
 public class SteamConnection {
 	private String steamid;
@@ -124,8 +130,8 @@ public class SteamConnection {
 		}
 	}
 
-	public void tryLogin(String username, String password, String token) throws LoginException {
-		GetTokenWithCredentials request = new GetTokenWithCredentials(username, password, token);
+	public void tryLogin(Credentials credentials) throws LoginException {
+		GetTokenWithCredentials request = new GetTokenWithCredentials(credentials.username, credentials.password, credentials.steamguard_token);
 
 		JSONObject ret;
 		try {
@@ -143,6 +149,19 @@ public class SteamConnection {
 
 		steamid = ret.get("x_steamid").toString();
 		access_token = ret.get("access_token").toString();
+	}
+
+	public void tryLogin(AuthStorage storage) throws LoginException {
+		Credentials credentials = storage.getCredentials();
+		if(credentials == null) {
+			throw new LoginException("credentials_in_storage_null");
+		}
+		tryLogin(credentials, storage);
+	}
+
+	public void tryLogin(Credentials credentials, AuthStorage storage) throws LoginException {
+		tryLogin(credentials);
+		storage.setCredentials(credentials);
 	}
 
 	public void addUmqid(BaseAPIMethod method) {

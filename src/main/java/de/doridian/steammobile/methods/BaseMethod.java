@@ -5,6 +5,7 @@ import org.json.simple.parser.JSONParser;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -56,52 +57,45 @@ public abstract class BaseMethod {
 			URL url = getURL();
 			HttpURLConnection conn;
 
-			if(isPOST()) {
-				conn = (HttpURLConnection)url.openConnection();
-				conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
-				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				conn.setRequestMethod("POST");
-				conn.setDoOutput(true);
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			OutputStreamWriter writer = new OutputStreamWriter(outputStream);
+			boolean isFirst = true;
+			for(Map.Entry<String, String> param : data.entrySet()) {
+				if(isFirst)
+					isFirst = false;
+				else
+					writer.write('&');
 
-				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-				OutputStreamWriter writer = new OutputStreamWriter(outputStream);
-				boolean isFirst = true;
-				for(Map.Entry<String, String> param : data.entrySet()) {
-					if(isFirst)
-						isFirst = false;
-					else
-						writer.write('&');
+				writer.write(URLEncoder.encode(param.getKey(), "UTF-8"));
+				writer.write('=');
+				writer.write(URLEncoder.encode(param.getValue(), "UTF-8"));
+			}
+			writer.close();
 
-					writer.write(URLEncoder.encode(param.getKey(), "UTF-8"));
-					writer.write('=');
-					writer.write(URLEncoder.encode(param.getValue(), "UTF-8").replace("+", "%20"));
-				}
-				writer.close();
-				
-				conn.setRequestProperty("Content-Length", String.valueOf(outputStream.size()));
-				
-				outputStream.writeTo(conn.getOutputStream());
-				conn.getOutputStream().close();
-			} else {
+			boolean post = isPOST();
+
+			if(!post) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(url);
 				sb.append('?');
-				boolean isFirst = true;
-				for(Map.Entry<String, String> param : data.entrySet()) {
-					if(isFirst)
-						isFirst = false;
-					else
-						sb.append('&');
-
-					sb.append(URLEncoder.encode(param.getKey(), "UTF-8"));
-					sb.append('=');
-					sb.append(URLEncoder.encode(param.getValue(),"UTF-8"));
-				}
+				sb.append(outputStream);
 				url = new URL(sb.toString());
-				conn = (HttpURLConnection)url.openConnection();
-				conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
 			}
 
+			conn = (HttpURLConnection)url.openConnection();
+			conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
+
+			if(post) {
+				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				conn.setRequestProperty("Content-Length", String.valueOf(outputStream.size()));
+				conn.setRequestMethod("POST");
+				conn.setDoOutput(true);
+
+				OutputStream stream = conn.getOutputStream();
+				outputStream.writeTo(stream);
+				stream.close();
+			}
+			
 			String cookies = getCookies();
 			if(cookies != null) {
 				conn.setRequestProperty("cookie", cookies);
@@ -120,7 +114,6 @@ public abstract class BaseMethod {
 				ret.put("cookie", cookies);
 			}
 
-			System.out.println(ret.toJSONString());
 			return ret;
 		} catch(RequestException e) {
 			throw e;

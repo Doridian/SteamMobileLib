@@ -1,4 +1,4 @@
-package de.doridian.steammobile;
+package de.doridian.steammobile.test;
 
 import de.doridian.steammobile.auth.base.AuthStorage;
 import de.doridian.steammobile.auth.Credentials;

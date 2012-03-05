@@ -1,5 +1,5 @@
-All files of SteamMobileClient are subject to this license:
-SteamMobileClient Copyright (c) Doridian
+All files of SteamMobileLib are subject to this license:
+SteamMobileLib Copyright (c) Doridian
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:

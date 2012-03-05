@@ -54,9 +54,6 @@ public abstract class BaseMethod {
 		try {
 			System.setProperty("http.agent", "");
 
-			URL url = getURL();
-			HttpURLConnection conn;
-
 			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 			OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 			boolean isFirst = true;
@@ -72,6 +69,7 @@ public abstract class BaseMethod {
 			}
 			writer.close();
 
+			URL url = getURL();
 			boolean post = isPOST();
 
 			if(!post) {
@@ -82,7 +80,7 @@ public abstract class BaseMethod {
 				url = new URL(sb.toString());
 			}
 
-			conn = (HttpURLConnection)url.openConnection();
+			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
 
 			if(post) {

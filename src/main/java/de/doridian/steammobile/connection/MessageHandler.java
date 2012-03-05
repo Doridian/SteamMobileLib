@@ -85,7 +85,7 @@ public class MessageHandler {
 			Class[] params = method.getParameterTypes();
 			if(params.length != 1) continue;
 			Class paramOne = params[0];
-			if(!paramOne.isAssignableFrom(Message.class)) continue;
+			if(!Message.class.isAssignableFrom(paramOne)) continue;
 			Class<? extends Message> forMessage = (Class<? extends Message>)paramOne;
 
 			try {

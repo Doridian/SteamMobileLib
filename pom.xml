@@ -17,7 +17,7 @@
 
     <!-- Build -->
 	<build>
-        <defaultGoal>clean compile package install</defaultGoal>
+        <defaultGoal>install</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         <!-- Resources -->
         <resources>

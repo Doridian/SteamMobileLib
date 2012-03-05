@@ -3,6 +3,7 @@ package de.doridian.steammobile.methods;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -58,10 +59,12 @@ public abstract class BaseMethod {
 			if(isPOST()) {
 				conn = (HttpURLConnection)url.openConnection();
 				conn.setRequestProperty("User-Agent", "Steam App / Android / 1.0 / 1297579");
+				conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 				conn.setRequestMethod("POST");
 				conn.setDoOutput(true);
 
-				OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				OutputStreamWriter writer = new OutputStreamWriter(outputStream);
 				boolean isFirst = true;
 				for(Map.Entry<String, String> param : data.entrySet()) {
 					if(isFirst)
@@ -74,6 +77,11 @@ public abstract class BaseMethod {
 					writer.write(URLEncoder.encode(param.getValue(), "UTF-8").replace("+", "%20"));
 				}
 				writer.close();
+				
+				conn.setRequestProperty("Content-Length", String.valueOf(outputStream.size()));
+				
+				outputStream.writeTo(conn.getOutputStream());
+				conn.getOutputStream().close();
 			} else {
 				StringBuilder sb = new StringBuilder();
 				sb.append(url);

@@ -26,18 +26,26 @@ public class GetTokenWithCredentials extends BaseAPIMethod {
 
 	@Override
 	public boolean isPOST() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public JSONObject send() throws RequestException {
 		Map<String, String> params = new HashMap<String,String>();
 		params.put("client_id", CLIENTID);
+
 		params.put("grant_type", "password");
+
 		params.put("username", username);
 		params.put("password", password);
+
 		if(token != null && !token.equals("null"))
 			params.put("x_emailauthcode", token);
+		else
+			params.put("x_emailauthcode", "");
+		
+		params.put("x_webcookie", "");
+		
 		params.put("scope", "read_profile write_profile read_client write_client");
 		return doRequest(params);
 	}

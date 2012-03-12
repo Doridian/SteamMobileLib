@@ -63,7 +63,7 @@ public class SteamConnection {
 		try {
 			JSONObject ret = msg.send();
 			JSONArray arr = (JSONArray)ret.get("groups");
-			friends.clear();
+			groups.clear();
 			for(Object ent : arr) {
 				JSONObject entj = (JSONObject)ent;
 				Group group = new Group(this, entj.get("steamid").toString());

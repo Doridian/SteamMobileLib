@@ -2,6 +2,7 @@ package de.doridian.steammobile.connection;
 
 import de.doridian.steammobile.friend.Friend;
 import de.doridian.steammobile.messages.Message;
+import de.doridian.steammobile.messages.PersonaRelationshipMessage;
 import de.doridian.steammobile.messages.PersonaStateMessage;
 import de.doridian.steammobile.methods.RequestException;
 import de.doridian.steammobile.methods.api.ISteamWebUserPresenceOAuth.Logoff;
@@ -54,10 +55,24 @@ public class MessageHandler {
 	class DefaultMessageListener implements MessageListener {
 		@MessageListener.Handler
 		public void onPersonaStateChanged(PersonaStateMessage msg) {
-			if(!connection.friends.containsKey(msg.steamid_other)) return;
-			Friend friend = connection.friends.get(msg.steamid_other);
+			Friend friend;
+			if(!connection.friends.containsKey(msg.steamid_other)) {
+				String relationship = "3";
+				if(msg instanceof PersonaRelationshipMessage) {
+					relationship = ""+msg.status_flags;
+				}
+				friend = new Friend(connection, msg.steamid_other, relationship, System.currentTimeMillis() / 1000);
+				connection.friends.put(msg.steamid_other, friend);
+			} else {
+				friend = connection.friends.get(msg.steamid_other);
+			}
 			friend.personaname = msg.persona_name;
 			friend.personastate = msg.persona_state;
+		}
+
+		@MessageListener.Handler
+		public void onPersonaRelationshipChanged(PersonaRelationshipMessage msg) {
+			onPersonaStateChanged(msg);
 		}
 	}
 

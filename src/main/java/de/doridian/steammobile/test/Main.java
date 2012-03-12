@@ -63,7 +63,6 @@ public class Main {
 	}
 
 	public static void connect() {
-
 		Credentials credentials;
 		AuthStorage storage = new FlatFileAuthStorage(new File(AUTHFILE));
 		credentials = storage.getCredentials();

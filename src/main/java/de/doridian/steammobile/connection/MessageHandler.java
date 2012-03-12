@@ -203,6 +203,7 @@ public class MessageHandler {
 
 			if(obj.containsKey("sectimeout")) {
 				mstimeout = Integer.valueOf(obj.get("sectimeout").toString()) * 1000;
+				if(mstimeout > 5000) mstimeout = 5000;
 			}
 
 			return ret;

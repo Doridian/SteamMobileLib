@@ -45,6 +45,7 @@ public abstract class Message {
 		addMessage(MyTextMessage.class);
 
 		addMessage(PersonaStateMessage.class);
+		addMessage(PersonaRelationshipMessage.class);
 		addMessage(TypingMessage.class);
 		addMessage(LeftConversationMessage.class);
 	}

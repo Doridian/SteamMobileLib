@@ -57,12 +57,7 @@ public class MessageHandler {
 		public void onPersonaStateChanged(PersonaStateMessage msg) {
 			Friend friend;
 			if(!connection.friends.containsKey(msg.steamid_other)) {
-				String relationship = "3";
-				if(msg instanceof PersonaRelationshipMessage) {
-					relationship = ""+msg.status_flags;
-				}
-				friend = new Friend(connection, msg.steamid_other, relationship, System.currentTimeMillis() / 1000);
-				connection.friends.put(msg.steamid_other, friend);
+				return;
 			} else {
 				friend = connection.friends.get(msg.steamid_other);
 			}
@@ -72,7 +67,15 @@ public class MessageHandler {
 
 		@MessageListener.Handler
 		public void onPersonaRelationshipChanged(PersonaRelationshipMessage msg) {
-			onPersonaStateChanged(msg);
+			Friend friend;
+			if(!connection.friends.containsKey(msg.steamid_other)) {
+				friend = new Friend(connection, msg.steamid_other, ""+msg.persona_state, System.currentTimeMillis() / 1000);
+				connection.friends.put(msg.steamid_other, friend);
+			} else {
+				friend = connection.friends.get(msg.steamid_other);
+			}
+			friend.relationship = ""+msg.persona_state;
+			friend.personaname = msg.persona_name;
 		}
 	}
 
